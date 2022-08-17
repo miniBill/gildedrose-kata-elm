@@ -85,6 +85,36 @@ initial =
                 else
                     Expect.equal (clamp 0 50 <| item.quality + 1) updated.quality
             )
+        , testSpecific "Conjured staff"
+            "Conjured items degrade twice as fast"
+            (\item updated ->
+                Expect.equal
+                    (case item.quality of
+                        0 ->
+                            0
+
+                        1 ->
+                            0
+
+                        2 ->
+                            0
+
+                        3 ->
+                            if item.sell_by < 0 then
+                                0
+
+                            else
+                                1
+
+                        _ ->
+                            if item.sell_by < 0 then
+                                item.quality - 4
+
+                            else
+                                item.quality - 2
+                    )
+                    updated.quality
+            )
         ]
 
 

@@ -19,19 +19,22 @@ updateItemQuality item =
     else if item.name == "Backstage passes to a TAFKAL80ETC concert" then
         updateBackstagePass item
 
+    else if String.contains "Conjured" item.name then
+        updateGenericItem 2 item
+
     else
-        updateGenericItem item
+        updateGenericItem 1 item
 
 
-updateGenericItem : Item -> Item
-updateGenericItem item =
+updateGenericItem : Int -> Item -> Item
+updateGenericItem speed item =
     let
         quality =
             if item.sell_by < 0 then
-                item.quality - 2
+                item.quality - 2 * speed
 
             else
-                item.quality - 1
+                item.quality - speed
     in
     { item | sell_by = item.sell_by - 1, quality = max 0 quality }
 
