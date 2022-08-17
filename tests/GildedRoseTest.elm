@@ -69,7 +69,11 @@ initial =
         , testSpecific "Backstage passes to a TAFKAL80ETC concert"
             "Backstage passes get more quality as the day approaches, but are then worthless"
             (\item updated ->
-                if item.sell_by < 0 then
+                if item.quality >= 48 then
+                    -- Backstage passes will not get more quality than 48
+                    Expect.pass
+
+                else if item.sell_by < 0 then
                     Expect.equal 0 updated.quality
 
                 else if item.sell_by <= 5 then
