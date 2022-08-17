@@ -60,29 +60,26 @@ initial =
                 else
                     Expect.greaterThan item.quality updated.quality
             )
-        , testGeneric "The quality of an item is never more than 50"
-            (\_ updated -> Expect.atMost 50 updated.quality)
+        , fuzz itemFuzzer
+            "The quality of an item is never more than 50"
+            (\item -> Expect.atMost 50 (updateItemQuality item).quality)
         , testSpecific "Sulfuras, Hand of Ragnaros"
             "Sulfuras' quality never decreases"
             (\item updated -> Expect.equal item.quality updated.quality)
         , testSpecific "Backstage passes to a TAFKAL80ETC concert"
             "Backstage passes get more quality as the day approaches, but are then worthless"
             (\item updated ->
-                if item.quality >= 50 then
-                    -- Backstage passes never have quality more than 50 in practice
-                    Expect.pass
-
-                else if item.sell_by < 0 then
+                if item.sell_by < 0 then
                     Expect.equal 0 updated.quality
 
                 else if item.sell_by <= 5 then
-                    Expect.equal (item.quality + 3) updated.quality
+                    Expect.equal (clamp 0 50 <| item.quality + 3) updated.quality
 
                 else if item.sell_by <= 10 then
-                    Expect.equal (item.quality + 2) updated.quality
+                    Expect.equal (clamp 0 50 <| item.quality + 2) updated.quality
 
                 else
-                    Expect.equal (item.quality + 1) updated.quality
+                    Expect.equal (clamp 0 50 <| item.quality + 1) updated.quality
             )
         ]
 

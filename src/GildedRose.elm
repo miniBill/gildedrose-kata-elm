@@ -8,7 +8,7 @@ type alias Item =
     }
 
 
-updateItemQuality : Item -> Item
+updateItemQuality : { name : String, sell_by : Int, quality : Int } -> { name : String, sell_by : Int, quality : Int }
 updateItemQuality =
     \item ->
         if item.name == "Aged Brie" || item.name == "Backstage passes to a TAFKAL80ETC concert" then
