@@ -6,13 +6,15 @@ import GildedRose exposing (..)
 import Test exposing (..)
 
 
-suite : Test
-suite =
-    test "example test"
-        (\_ ->
-            let
-                foo =
-                    Item "foo" 10 30
-            in
-            Expect.equal foo.name "foo"
-        )
+initial : Test
+initial =
+    describe "Initial behaviour"
+        [ test "example test"
+            (\_ ->
+                let
+                    foo =
+                        Item "foo" 10 30
+                in
+                Expect.equal foo.name "foo"
+            )
+        ]
