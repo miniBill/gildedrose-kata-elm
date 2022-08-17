@@ -14,5 +14,5 @@ suite =
                 foo =
                     Item "foo" 10 30
             in
-            Expect.equal foo.name "fixme"
+            Expect.equal foo.name "foo"
         )
