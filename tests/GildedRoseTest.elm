@@ -22,6 +22,26 @@ initial =
                     else
                         Expect.lessThan item.quality updated.quality
                 )
+            , testGeneric
+                "quality decreses twice as fast if the sell_by date has passed"
+                (\item updated ->
+                    Expect.equal
+                        (case item.quality of
+                            0 ->
+                                0
+
+                            1 ->
+                                0
+
+                            _ ->
+                                if item.sell_by < 0 then
+                                    item.quality - 2
+
+                                else
+                                    item.quality - 1
+                        )
+                        updated.quality
+                )
             ]
         , fuzz itemFuzzer
             "The quality of an item is never negative"
@@ -31,7 +51,49 @@ initial =
                     Expect.atLeast 0 (updateItemQuality item).quality
                 ]
             )
+        , testSpecific "Aged Brie"
+            "The quality of Aged Brie increases the older it gets (up to 50)"
+            (\item updated ->
+                if item.quality == 50 then
+                    Expect.equal 50 updated.quality
+
+                else
+                    Expect.greaterThan item.quality updated.quality
+            )
+        , testGeneric "The quality of an item is never more than 50"
+            (\_ updated -> Expect.atMost 50 updated.quality)
+        , testSpecific "Sulfuras, Hand of Ragnaros"
+            "Sulfuras' quality never decreases"
+            (\item updated -> Expect.equal item.quality updated.quality)
+        , testSpecific "Backstage passes to a TAFKAL80ETC concert"
+            "Backstage passes get more quality as the day approaches, but are then worthless"
+            (\item updated ->
+                if item.quality >= 50 then
+                    -- Backstage passes never have quality more than 50 in practice
+                    Expect.pass
+
+                else if item.sell_by < 0 then
+                    Expect.equal 0 updated.quality
+
+                else if item.sell_by <= 5 then
+                    Expect.equal (item.quality + 3) updated.quality
+
+                else if item.sell_by <= 10 then
+                    Expect.equal (item.quality + 2) updated.quality
+
+                else
+                    Expect.equal (item.quality + 1) updated.quality
+            )
         ]
+
+
+testSpecific : String -> String -> (Item -> Item -> Expectation) -> Test
+testSpecific name description toExpectation =
+    fuzz (specificItem name)
+        description
+        (\item ->
+            toExpectation item (updateItemQuality item)
+        )
 
 
 testGeneric : String -> (Item -> Item -> Expectation) -> Test
@@ -45,8 +107,13 @@ testGeneric description toExpectation =
 
 genericItemFuzzer : Fuzzer Item
 genericItemFuzzer =
+    specificItem "Foo"
+
+
+specificItem : String -> Fuzzer Item
+specificItem name =
     Fuzz.map3 Item
-        (Fuzz.constant "Foo")
+        (Fuzz.constant name)
         sellByFuzzer
         qualityFuzzer
 
@@ -74,11 +141,12 @@ nameFuzzer =
 sellByFuzzer : Fuzzer Int
 sellByFuzzer =
     -- The critical points are 0, 6 and 11
-    Fuzz.oneOf (List.map Fuzz.constant <| List.range -1 12)
+    Fuzz.oneOf (List.map Fuzz.constant <| List.range -2 12)
 
 
 qualityFuzzer : Fuzzer Int
 qualityFuzzer =
     -- Critical points are 0, 1, 2, and 50
     -- We don't include -1 because the problem input says the quality is always nonnegative
-    Fuzz.oneOf (List.map Fuzz.constant <| List.range 0 51)
+    -- We don't include 51 because the problem input says the quality is never over 50. Except for "Sulfuras"
+    Fuzz.oneOf (List.map Fuzz.constant <| List.range 0 50)
