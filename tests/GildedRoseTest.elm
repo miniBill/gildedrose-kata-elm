@@ -19,7 +19,7 @@ initial =
                 Expect.equal foo.name "foo"
             )
         , fuzz itemFuzzer
-            "the quality of an item is never negative"
+            "The quality of an item is never negative"
             (Expect.all
                 [ \item -> Expect.atLeast 0 item.quality
                 , \item ->
@@ -36,6 +36,7 @@ itemFuzzer =
 
 nameFuzzer : Fuzzer String
 nameFuzzer =
+    -- There are three names which are handled differently, then we add a generic string fuzzer for non-specific names
     Fuzz.oneOf
         [ Fuzz.constant "Aged Brie"
         , Fuzz.constant "Backstage passes to a TAFKAL80ETC concert"
@@ -46,9 +47,12 @@ nameFuzzer =
 
 sellByFuzzer : Fuzzer Int
 sellByFuzzer =
-    Debug.todo "TODO"
+    -- The critical points are 0, 6 and 11
+    Fuzz.oneOf (List.map Fuzz.constant <| List.range -1 12)
 
 
 qualityFuzzer : Fuzzer Int
 qualityFuzzer =
-    Debug.todo "TODO"
+    -- Critical points are 0, 1, 2, and 50
+    -- We don't include -1 because the problem input says the quality is always nonnegative
+    Fuzz.oneOf (List.map Fuzz.constant <| List.range 0 51)
