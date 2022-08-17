@@ -11,7 +11,6 @@ when inside the directory containing this file.
 
 -}
 
-
 import Docs.ReviewAtDocs
 import NoDebug.Log
 import NoDebug.TodoOrToString
@@ -32,6 +31,7 @@ import NoUnused.Patterns
 import NoUnused.Variables
 import Review.Rule as Rule exposing (Rule)
 import Simplify
+import Simplify.RecordAccess
 
 
 config : List Rule
@@ -56,4 +56,5 @@ config =
     , NoUnused.Patterns.rule
     , NoUnused.Variables.rule
     , Simplify.rule Simplify.defaults
+    , Simplify.RecordAccess.rule
     ]
