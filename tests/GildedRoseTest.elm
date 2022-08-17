@@ -1,23 +1,28 @@
 module GildedRoseTest exposing (initial)
 
-import Expect
+import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer)
 import GildedRose exposing (Item, updateItemQuality)
-import Test exposing (Test, describe, fuzz, test)
+import Test exposing (Test, describe, fuzz)
 
 
 initial : Test
 initial =
     describe "Initial behaviour"
-        [ test "example test"
-            (\_ ->
-                let
-                    foo : Item
-                    foo =
-                        Item "foo" 10 30
-                in
-                Expect.equal foo.name "foo"
-            )
+        [ describe "Generic items"
+            [ testGeneric
+                "sell_in decreases every day"
+                (\item updated -> Expect.lessThan item.sell_by updated.sell_by)
+            , testGeneric
+                "quality decreses every day if positive"
+                (\item updated ->
+                    if item.quality == 0 then
+                        Expect.equal 0 updated.quality
+
+                    else
+                        Expect.lessThan item.quality updated.quality
+                )
+            ]
         , fuzz itemFuzzer
             "The quality of an item is never negative"
             (Expect.all
@@ -29,9 +34,30 @@ initial =
         ]
 
 
+testGeneric : String -> (Item -> Item -> Expectation) -> Test
+testGeneric description toExpectation =
+    fuzz genericItemFuzzer
+        description
+        (\item ->
+            toExpectation item (updateItemQuality item)
+        )
+
+
+genericItemFuzzer : Fuzzer Item
+genericItemFuzzer =
+    Fuzz.map3 Item
+        (Fuzz.constant "Foo")
+        sellByFuzzer
+        qualityFuzzer
+
+
 itemFuzzer : Fuzzer Item
 itemFuzzer =
-    Fuzz.map3 Item nameFuzzer sellByFuzzer qualityFuzzer
+    Fuzz.map3
+        Item
+        nameFuzzer
+        sellByFuzzer
+        qualityFuzzer
 
 
 nameFuzzer : Fuzzer String
