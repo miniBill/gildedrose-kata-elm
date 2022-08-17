@@ -30,7 +30,7 @@ updateItemQuality =
                     { item | sell_by = item.sell_by - 1, quality = item.quality + 1 }
 
             else
-                { item | sell_by = item.sell_by }
+                item
 
         else if item.name /= "Aged Brie" && item.name /= "Sulfuras, Hand of Ragnaros" then
             if item.sell_by < 0 && item.quality > 0 then
