@@ -10,54 +10,40 @@ type alias Item =
 
 updateItemQuality : Item -> Item
 updateItemQuality item =
-    if item.name == "Sulfuras, Hand of Ragnaros" then
-        item
+    if item.name == "Aged Brie" || item.name == "Backstage passes to a TAFKAL80ETC concert" then
+        if item.quality < 50 then
+            if item.name == "Backstage passes to a TAFKAL80ETC concert" then
+                if item.sell_by < 0 then
+                    { item | sell_by = item.sell_by - 1, quality = 0 }
 
-    else if item.name == "Aged Brie" then
-        updateAgedBrie item
+                else if item.sell_by < 6 then
+                    { item | sell_by = item.sell_by - 1, quality = item.quality + 3 }
 
-    else if item.name == "Backstage passes to a TAFKAL80ETC concert" then
-        updateBackstagePass item
+                else if item.sell_by < 11 then
+                    { item | sell_by = item.sell_by - 1, quality = item.quality + 2 }
 
-    else if String.contains "Conjured" item.name then
-        updateGenericItem 2 item
+                else
+                    { item | sell_by = item.sell_by - 1, quality = item.quality + 1 }
+
+            else
+                { item | sell_by = item.sell_by - 1, quality = item.quality + 1 }
+
+        else
+            item
+
+    else if item.name /= "Aged Brie" && item.name /= "Sulfuras, Hand of Ragnaros" then
+        if item.sell_by < 0 && item.quality > 0 then
+            if item.quality >= 2 then
+                { item | sell_by = item.sell_by - 1, quality = item.quality - 2 }
+
+            else
+                { item | sell_by = item.sell_by - 1, quality = 0 }
+
+        else if item.quality >= 1 then
+            { item | sell_by = item.sell_by - 1, quality = item.quality - 1 }
+
+        else
+            { item | sell_by = item.sell_by - 1, quality = 0 }
 
     else
-        updateGenericItem 1 item
-
-
-updateGenericItem : Int -> Item -> Item
-updateGenericItem speed item =
-    let
-        quality =
-            if item.sell_by < 0 then
-                item.quality - 2 * speed
-
-            else
-                item.quality - speed
-    in
-    { item | sell_by = item.sell_by - 1, quality = max 0 quality }
-
-
-updateBackstagePass : Item -> Item
-updateBackstagePass item =
-    let
-        quality =
-            if item.sell_by < 0 then
-                0
-
-            else if item.sell_by < 6 then
-                item.quality + 3
-
-            else if item.sell_by < 11 then
-                item.quality + 2
-
-            else
-                item.quality + 1
-    in
-    { item | sell_by = item.sell_by - 1, quality = clamp 0 50 quality }
-
-
-updateAgedBrie : Item -> Item
-updateAgedBrie item =
-    { item | sell_by = item.sell_by - 1, quality = clamp 0 50 <| item.quality + 1 }
+        item
