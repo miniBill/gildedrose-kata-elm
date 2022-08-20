@@ -11,6 +11,7 @@ type alias Item =
 updateItemQuality : Item -> Item
 updateItemQuality item =
     let
+        withUpdatedQuality : Item
         withUpdatedQuality =
             if
                 (item.name /= "Aged Brie")
@@ -28,11 +29,13 @@ updateItemQuality item =
 
             else if item.quality < 50 then
                 let
+                    item2 : Item
                     item2 =
                         { item | quality = item.quality + 1 }
                 in
                 if item2.name == "Backstage passes to a TAFKAL80ETC concert" then
                     let
+                        item3 : Item
                         item3 =
                             if item2.sellIn < 11 then
                                 if item2.quality < 50 then
@@ -60,13 +63,15 @@ updateItemQuality item =
             else
                 item
 
+        withSulfurasCheck : Item
         withSulfurasCheck =
-            if item.name /= "Sulfuras, Hand of Ragnaros" then
+            if withUpdatedQuality.name /= "Sulfuras, Hand of Ragnaros" then
                 { withUpdatedQuality | sellIn = withUpdatedQuality.sellIn - 1 }
 
             else
                 withUpdatedQuality
 
+        withSellInCheck : Item
         withSellInCheck =
             if withSulfurasCheck.sellIn < 0 then
                 if withSulfurasCheck.name /= "Aged Brie" then

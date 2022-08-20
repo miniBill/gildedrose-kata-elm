@@ -18,6 +18,7 @@ suite =
 
                     Just previousDay ->
                         let
+                            test : Test
                             test =
                                 describe
                                     ("On day " ++ String.fromInt dayNumber)
