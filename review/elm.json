@@ -18,6 +18,7 @@
             "jfmengels/elm-review-documentation": "2.0.4",
             "jfmengels/elm-review-simplify": "2.1.0",
             "jfmengels/elm-review-unused": "1.2.0",
+            "r-k-b/elm-interval": "2.1.2",
             "stil4m/elm-syntax": "7.2.9"
         },
         "indirect": {
