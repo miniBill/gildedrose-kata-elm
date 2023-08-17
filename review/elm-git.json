@@ -1,0 +1,10 @@
+{
+    "git-dependencies": {
+        "direct": {
+            "https://github.com/miniBill/elm-review-optimize.git": "e7f3b7b07f11b10cbc560f76400d7d67deef929b"
+        },
+        "indirect": {
+            "git@github.com:miniBill/elm-interval.git": "413c5f3ca8f52e845389eb377556fdac2bd58af6"
+        }
+    }
+}
