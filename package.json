@@ -1,9 +1,11 @@
 {
-  "devDependencies": {
-    "elm-review": "^2.12.0",
-    "elm-test": "^0.19.1-revision12"
-  },
-  "resolutions": {
-    "**/wrap-ansi": "^7.0.0"
-  }
+    "devDependencies": {
+        "elm-review": "^2.12.0",
+        "elm-test": "^0.19.1-revision12"
+    },
+    "resolutions": {
+        "**/wrap-ansi": "^7.0.0"
+    },
+    "license": "BSD-3-Clause",
+    "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72"
 }
